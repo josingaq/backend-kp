@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// model Post {
+//   id       String    @id @default(auto()) @map("_id") @db.ObjectId
+//   slug     String    @unique
+//   title    String
+//   body     String
+//   author   User      @relation(fields: [authorId], references: [id])
+//   authorId String    @db.ObjectId
+//   comments Comment[]
+// }
+
+model Rol {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  User      User[]
+}
+
+model User {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String   @unique
+  password   String
+  dni        String   @unique
+  name       String
+  lastName   String
+  address    String
+  phone      String
+  district   String?
+  province   String?
+  department String?
+  country    String?
+  rolId      String   @db.ObjectId
+  rol        Rol      @relation(fields: [rolId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  // posts   Post[]
+}
+
+// model Comment {
+//   id      String @id @default(auto()) @map("_id") @db.ObjectId
+//   comment String
+//   post    Post   @relation(fields: [postId], references: [id])
+//   postId  String @db.ObjectId
+// }
+
+// Address is an embedded document
+// type Address {
+//   street String?
+//   city   String?
+//   state  String?
+//   zip    String?
+// }
