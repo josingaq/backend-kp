@@ -12,9 +12,12 @@ import cors from 'cors'
 import { typeDefs } from './graphql/typeDefs.js'
 import { resolvers } from './graphql/resolvers.js'
 
-interface MyContext {
-  token?: string
-}
+import { type MyContext } from './types/index'
+import { getTokenFromContext } from './utils/getTokenFromContext.js'
+
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 const schema = makeExecutableSchema({ typeDefs, resolvers })
 
@@ -32,9 +35,7 @@ const serverCleanup = useServer(
     schema,
     // context for subscriptions
     context: async (ctx, msg, args) => {
-      return {
-        token: ctx.connectionParams?.Authorization
-      }
+      return getTokenFromContext(ctx.connectionParams?.Authorization as string)
     },
     // As before, ctx is the graphql-ws Context where connectionParams live.
     onConnect: async (ctx) => {
@@ -73,13 +74,13 @@ app.use(
   bodyParser.json(),
   expressMiddleware(server, {
     // context for queries and mutations
-    context: async ({ req, res }) => ({
-      token: req.headers.authorization
-    })
+    context: async ({ req, res }) => {
+      return getTokenFromContext(req.headers?.authorization as string)
+    }
   })
 )
 
-const PORT = 4000
+const PORT = process.env.PORT ?? '4000'
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Endpoint running on http://localhost:${PORT}/graphql`)
