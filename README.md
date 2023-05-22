@@ -7,6 +7,7 @@
 ```bash
 DATABASE_URL=mongodb://USERNAME:PASSWORD@HOST/DATABASE
 PORT=4000
+JWT_SECRET=YOUR_SECRET
 ```
 
 <!-- Conection MongoDB -->
